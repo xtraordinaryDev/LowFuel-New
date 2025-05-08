@@ -34,7 +34,7 @@
         }
 
         .contact-form {
-            background-color: #f7d917;
+            background-color: #ffffff;
             color: black;
             border-radius: 15px;
             padding: 30px;
@@ -69,6 +69,114 @@
         .btn-submit:hover {
             background-color: #f7d917;
             color: black;
+        }
+
+        .selection-tiles {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin: 40px 0;
+        }
+
+        .selection-tile {
+            flex: 1;
+            max-width: 300px;
+            background-color: var(--surface-color);
+            border-radius: 10px;
+            padding: 30px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .selection-tile:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+        }
+
+        .selection-tile h3 {
+            font-size: 24px;
+            color: var(--heading-color);
+            margin-bottom: 15px;
+        }
+
+        .selection-tile i {
+            font-size: 48px;
+            color: var(--accent-color);
+            margin-bottom: 20px;
+        }
+
+        .contact-form {
+            display: none;
+        }
+
+        .contact-form.active {
+            display: block;
+        }
+
+        .membership-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+        }
+
+        .membership-modal-content {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background-color: white;
+            padding: 30px;
+            border-radius: 10px;
+            text-align: center;
+            max-width: 400px;
+            width: 90%;
+        }
+
+        .membership-buttons {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            margin-top: 20px;
+        }
+
+        .membership-btn {
+            padding: 10px 20px;
+            border-radius: 20px;
+            border: none;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .membership-btn-yes {
+            background-color: #f7d917;
+            color: black;
+        }
+
+        .membership-btn-no {
+            background-color: #333;
+            color: white;
+        }
+
+        .membership-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .code-input-container {
+            margin: 20px 0;
+        }
+        
+        .code-input-container input {
+            width: 200px;
+            margin: 0 auto;
+            display: block;
         }
     </style>
 
@@ -124,8 +232,33 @@
         </div>
     </header>
 
-    <main class="main">
+    <div class="membership-modal" id="membershipModal">
+        <div class="membership-modal-content">
+            <h3>Are you a Low Fuel member?</h3>
+            <p>Please select your membership status to proceed</p>
+            <div class="membership-buttons">
+                <button class="membership-btn membership-btn-yes" onclick="showCodeVerification()">Yes, I'm a member</button>
+                <button class="membership-btn membership-btn-no" onclick="redirectToBoats()">No, I'm not a member</button>
+            </div>
+        </div>
+    </div>
 
+    <div class="membership-modal" id="codeVerificationModal">
+        <div class="membership-modal-content">
+            <h3>Enter Member Code</h3>
+            <p>Please enter your 4-digit member code</p>
+            <div class="code-input-container">
+                <input type="text" id="memberCode" maxlength="4" placeholder="Enter code" class="form-control" style="text-align: center; letter-spacing: 4px; font-size: 24px;">
+            </div>
+            <div class="membership-buttons" style="margin-top: 20px;">
+                <button class="membership-btn membership-btn-yes" onclick="verifyCode()">Verify</button>
+                <button class="membership-btn membership-btn-no" onclick="closeCodeModal()">Cancel</button>
+            </div>
+            <p id="codeError" style="color: red; margin-top: 10px; display: none;">Incorrect code. Please try again.</p>
+        </div>
+    </div>
+
+    <main class="main">
         <!-- Page Title -->
         <div class="page-title" data-aos="fade">
             <div class="heading">
@@ -149,12 +282,28 @@
             </nav>
         </div><!-- End Page Title -->
 
+        <section class="selection-section">
+            <div class="container">
+                <div class="selection-tiles">
+                    <div class="selection-tile" onclick="checkMembership()">
+                        <i class="bi bi-water"></i>
+                        <h3>Boat</h3>
+                        <p>Click here for boat fueling services</p>
+                    </div>
+                    <div class="selection-tile" onclick="showContactForm()">
+                        <i class="bi bi-truck"></i>
+                        <h3>Other</h3>
+                        <p>Click here for other fueling services</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
         <section id="contact-us" class="contact-us section">
             <div class="container">
                 <div class="row justify-content-center">
                     <div class="col-lg-8">
-                        <div class="contact-form"
-                            style="background: #ffffff; padding: 40px; border-radius: 15px; box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);">
+                        <div class="contact-form" id="contactForm">
                             <h2 style="font-weight: 700; color: #333; text-align: center; margin-bottom: 20px;">Contact
                                 Us</h2>
                             <form id="contactForm" method="POST">
@@ -227,14 +376,11 @@
                                         style="background-color: #f7d917; color: #333; padding: 10px 20px; border-radius: 20px; transition: all 0.3s;">Submit</button>
                                 </div>
                             </form>
-
-
                         </div>
                     </div>
                 </div>
             </div>
         </section>
-
 
         <style>
             @media (max-width: 768px) {
@@ -261,9 +407,6 @@
                 margin-bottom: 10px;
             }
         </style>
-
-
-
     </main>
 
     <footer id="footer" class="footer dark-background">
@@ -360,6 +503,53 @@
     <!-- Main JS File -->
     <script src="assets/js/main.js"></script>
     <script>
+        function showContactForm() {
+            document.getElementById('contactForm').classList.add('active');
+            // Scroll to form
+            document.getElementById('contactForm').scrollIntoView({ behavior: 'smooth' });
+        }
+
+        function checkMembership() {
+            document.getElementById('membershipModal').style.display = 'block';
+        }
+
+        function showCodeVerification() {
+            document.getElementById('membershipModal').style.display = 'none';
+            document.getElementById('codeVerificationModal').style.display = 'block';
+            document.getElementById('memberCode').focus();
+        }
+
+        function closeCodeModal() {
+            document.getElementById('codeVerificationModal').style.display = 'none';
+            document.getElementById('codeError').style.display = 'none';
+            document.getElementById('memberCode').value = '';
+        }
+
+        function verifyCode() {
+            const code = document.getElementById('memberCode').value;
+            if (code === '2025') {
+                window.location.href = 'https://calendly.com/julian-cavin-low-fuel/30min?month=2025-05';
+            } else {
+                document.getElementById('codeError').style.display = 'block';
+                document.getElementById('memberCode').value = '';
+                document.getElementById('memberCode').focus();
+            }
+        }
+
+        function redirectToBoats() {
+            window.location.href = 'boats.html';
+        }
+
+        // Close modals when clicking outside
+        window.onclick = function(event) {
+            if (event.target == document.getElementById('membershipModal')) {
+                document.getElementById('membershipModal').style.display = 'none';
+            }
+            if (event.target == document.getElementById('codeVerificationModal')) {
+                closeCodeModal();
+            }
+        }
+
         document.getElementById('contactForm').addEventListener('submit', function(event) {
             event.preventDefault();
             var formData = new FormData(this);
